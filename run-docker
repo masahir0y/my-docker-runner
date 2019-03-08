@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if [ -n "$DEBUG" ]; then
+	set -x
+fi
+
+set -e
+
+default=ubuntu:18.04
+mount_dirs="ref toolchains"
+
+# The base image used for 'FROM'
+# e.g. ubuntu:18.04, fedora:29, etc.
+base=${1:-$default}
+
+case $base in 
+centos:*)
+	base_dockerfile=Dockerfile-centos ;;
+debian:*)
+	base_dockerfile=Dockerfile-debian ;;
+fedora:*)
+	base_dockerfile=Dockerfile-fedora ;;
+ubuntu:*)
+	base_dockerfile=Dockerfile-ubuntu ;;
+*)
+	echo "$base: unsupported" >&2
+	exit 1
+	;;
+esac
+
+# the directory path where this script is located
+this_dir=$(dirname $(realpath $0))
+
+# Is there a better way to create a temporary directory in a safe manner?
+tempdir=$(tempfile)
+rm -f $tempdir
+mkdir $tempdir
+
+echo "FROM $base" > $tempdir/Dockerfile
+cat $this_dir/$base_dockerfile >> $tempdir/Dockerfile
+
+docker build -t my-docker-builder/$base $tempdir
+
+rm -rf $tmpdir
+
+DOCKER_RUN_OPT=-it
+
+for d in $mount_dirs
+do
+	# Mount useful directories if they exist in your home directory.
+	# --volume=HOST_DIR:CONTAINER-DI
+	if [ -d $HOME/$d ]; then
+		DOCKER_RUN_OPT="$DOCKER_RUN_OPT --volume=$HOME/$d:/$d"
+	fi
+done
+
+# This is needed for running 'strace' in a docker
+DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
+
+docker run $DOCKER_RUN_OPT my-docker-builder/$base /bin/bash

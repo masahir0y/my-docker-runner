@@ -1,0 +1,38 @@
+#FROM debian:wheezy
+#FROM debian:jessie
+#FROM debian:stretch
+#FROM debian:buster
+
+# user name
+ARG USER=foo
+
+# packages to install
+ARG PKGS=" \
+	apt-file \
+	bc \
+	bison \
+	build-essential \
+	clang \
+	flex \
+	git \
+	libelf-dev \
+	libssl-dev \
+	nano \
+	strace \
+	sudo \
+"
+
+RUN \
+	apt-get update && \
+	# Suppress "delaying package configuration" warning
+	DEBCONF_NOWARNINGS=yes apt-get install -y apt-utils && \
+	# Install various packages
+	apt-get install -y ${PKGS} && \
+	# Set the root password to 'r'
+	echo 'root:r' | chpasswd && \
+	# Add a normal privilege user
+	useradd -m ${USER}
+
+# login as a normal privilege user
+USER ${USER}
+WORKDIR /home/${USER}
