@@ -7,17 +7,24 @@ ARG USER=foo
 # packages to install
 ARG PKGS=" \
 	apt-file \
+	autoconf \
+	autopoint \
 	bc \
 	bison \
 	build-essential \
 	clang \
 	flex \
+	gettext \
 	git \
 	libelf-dev \
 	libssl-dev \
 	nano \
+	pkg-config \
+	rsync \
 	strace \
 	sudo \
+	texinfo \
+	wget \
 "
 
 RUN \
