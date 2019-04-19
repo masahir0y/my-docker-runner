@@ -15,11 +15,15 @@ ARG PKGS=" \
 	bison \
 	build-essential \
 	clang \
+	cython \
 	flex \
 	gettext \
 	git \
+	gtk-doc-tools \
 	libelf-dev \
+	liblzma-dev \
 	libssl-dev \
+	libtool \
 	nano \
 	pkg-config \
 	rsync \
