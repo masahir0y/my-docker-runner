@@ -22,6 +22,7 @@ ARG PKGS=" \
 	liblzma-dev \
 	libssl-dev \
 	libtool \
+	man \
 	nano \
 	pkg-config \
 	rsync \
