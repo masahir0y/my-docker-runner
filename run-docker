@@ -1,10 +1,16 @@
 #!/bin/bash
 
-if [ -n "$DEBUG" ]; then
-	set -x
-fi
-
 set -e
+
+while [ $# -gt 0 ]
+do
+	case "$1" in
+	-d | --debug) set -x;;
+	-* | --*) echo "$1: unknown option" >&2; exit 1;;
+	*) break;;
+	esac
+	shift
+done
 
 default=ubuntu:18.04
 mount_dirs="ref toolchains"
