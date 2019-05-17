@@ -2,9 +2,12 @@
 
 set -e
 
+build_only=
+
 while [ $# -gt 0 ]
 do
 	case "$1" in
+	-b | --build-only) build_only=1;;
 	-d | --debug) set -x;;
 	-* | --*) echo "$1: unknown option" >&2; exit 1;;
 	*) break;;
@@ -45,9 +48,16 @@ mkdir $tempdir
 echo "FROM $base" > $tempdir/Dockerfile
 cat $this_dir/$base_dockerfile >> $tempdir/Dockerfile
 
-docker build -t my-docker-builder/$base $tempdir
+tag=my-docker-builder/$base
+
+docker build -t $tag $tempdir
 
 rm -rf $tmpdir
+
+if [ "$build_only" = 1 ]; then
+	echo "Building '$base' done"
+	exit 0
+fi
 
 DOCKER_RUN_OPT=-it
 
@@ -63,4 +73,4 @@ done
 # This is needed for running 'strace' in a docker
 DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
 
-docker run $DOCKER_RUN_OPT my-docker-builder/$base /bin/bash
+docker run $DOCKER_RUN_OPT $tag /bin/bash
