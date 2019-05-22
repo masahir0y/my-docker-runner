@@ -16,7 +16,7 @@ do
 done
 
 default=ubuntu:18.04
-mount_dirs="ref toolchains"
+mount_dirs="ref tools"
 
 # The base image used for 'FROM'
 # e.g. ubuntu:18.04, fedora:29, etc.
