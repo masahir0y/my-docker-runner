@@ -1,5 +1,9 @@
-#FROM ubuntu:16.04
-#FROM ubuntu:18.04
+ARG FROM=ubuntu
+#ARG FROM=ubuntu:16.04
+#ARG FROM=ubuntu:18.04
+#ARG FROM=ubuntu:19.04
+
+FROM ${FROM}
 
 # user name
 ARG USER=foo

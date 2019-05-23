@@ -1,7 +1,10 @@
-#FROM debian:wheezy
-#FROM debian:jessie
-#FROM debian:stretch
-#FROM debian:buster
+ARG FROM=debian
+#ARG FROM=debian:jessie
+#ARG FROM=debian:stretch
+#ARG FROM=debian:buster
+#ARG FROM=debian:sid
+
+FROM ${FROM}
 
 # user name
 ARG USER=foo

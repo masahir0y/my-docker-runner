@@ -1,5 +1,8 @@
-#FROM centos:6
-#FROM centos:7
+ARG FROM=centos
+#ARG FROM=centos:6
+#ARG FROM=centos:7
+
+FROM ${FROM}
 
 # user name
 ARG USER=foo

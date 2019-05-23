@@ -1,4 +1,9 @@
-#FROM fedora:29
+ARG FROM=fedora
+#ARG FROM=fedora:29
+#ARG FROM=fedora:30
+#ARG FROM=fedora:31
+
+FROM ${FROM}
 
 # user name
 ARG USER=foo

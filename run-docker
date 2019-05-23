@@ -15,47 +15,33 @@ do
 	shift
 done
 
-default=ubuntu:18.04
+default=ubuntu
 mount_dirs="ref tools"
 
 # The base image used for 'FROM'
-# e.g. ubuntu:18.04, fedora:29, etc.
-base=${1:-$default}
+# e.g. ubuntu, ubuntu:18.04, fedora:latest, etc.
+from=${1:-$default}
 
-case $base in 
-centos:*)
-	base_dockerfile=Dockerfile-centos ;;
-debian:*)
-	base_dockerfile=Dockerfile-debian ;;
-fedora:*)
-	base_dockerfile=Dockerfile-fedora ;;
-ubuntu:*)
-	base_dockerfile=Dockerfile-ubuntu ;;
-*)
-	echo "$base: unsupported" >&2
-	exit 1
-	;;
-esac
+distro=${from%:*}
 
 # the directory path where this script is located
 this_dir=$(dirname $(realpath $0))
 
-# Is there a better way to create a temporary directory in a safe manner?
-tempdir=$(tempfile)
-rm -f $tempdir
-mkdir $tempdir
+dockerfile=$this_dir/Dockerfile.$distro
 
-echo "FROM $base" > $tempdir/Dockerfile
-cat $this_dir/$base_dockerfile >> $tempdir/Dockerfile
+echo "$this_dir/$dockerfile"
 
-tag=my-docker-builder/$base
+if [ ! -f "$dockerfile" ]; then
+	echo "$distro: unsupported" >&2
+	exit 1
+fi
 
-docker build -t $tag $tempdir
+tag=my-docker-builder/$from
 
-rm -rf $tmpdir
+docker build -f $dockerfile -t $tag --build-arg FROM=$from $this_dir
 
 if [ "$build_only" = 1 ]; then
-	echo "Building '$base' done"
+	echo "Building '$tag' done"
 	exit 0
 fi
 
