@@ -1,0 +1,13 @@
+#!/bin/sh
+
+run-docker -b centos:6
+run-docker -b centos:7
+run-docker -b fedora:29
+run-docker -b fedora:30
+run-docker -b fedora:31
+run-docker -b debian:stretch
+run-docker -b debian:buster
+run-docker -b debian:sid
+run-docker -b ubuntu:16.04
+run-docker -b ubuntu:18.04
+run-docker -b ubuntu:19.04
