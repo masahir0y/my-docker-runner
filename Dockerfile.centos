@@ -20,10 +20,11 @@ ARG PKGS=" \
 "
 
 RUN \
-	# Uncomment the following three lines if you want to install manuals
-	#sed -i '/^tsflags=nodocs$/d' /etc/yum.conf && \
-	#yum reinstall -y yum && \
-	#yum install -y man && \
+	# Install manuals
+	sed -i '/^tsflags=nodocs$/d' /etc/yum.conf && \
+	yum update -y && \
+	yum reinstall -y yum && \
+	yum install -y man && \
 	# Install various packages
 	yum install -y ${PKGS} && \
 	# Set the root password empty
