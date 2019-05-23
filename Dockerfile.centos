@@ -4,9 +4,6 @@ ARG FROM=centos
 
 FROM ${FROM}
 
-# user name
-ARG USER=foo
-
 # packages to install
 ARG PKGS=" \
 	bison \
@@ -17,6 +14,7 @@ ARG PKGS=" \
 	make \
 	nano \
 	strace \
+	sudo \
 "
 
 RUN \
@@ -26,12 +24,8 @@ RUN \
 	yum reinstall -y yum && \
 	yum install -y man && \
 	# Install various packages
-	yum install -y ${PKGS} && \
-	# Set the root password empty
-	echo 'root:' | chpasswd && \
-	# Add a normal privilege user
-	useradd -m ${USER}
+	yum install -y ${PKGS}
 
-# login as a normal privilege user
-USER ${USER}
-WORKDIR /home/${USER}
+COPY entrypoint /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint"]

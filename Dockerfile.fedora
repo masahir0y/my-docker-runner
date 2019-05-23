@@ -5,9 +5,6 @@ ARG FROM=fedora
 
 FROM ${FROM}
 
-# user name
-ARG USER=foo
-
 # packages to install
 ARG PKGS=" \
 	bison \
@@ -18,6 +15,7 @@ ARG PKGS=" \
 	make \
 	nano \
 	strace \
+	sudo \
 "
 
 RUN \
@@ -27,12 +25,8 @@ RUN \
 	dnf reinstall -y dnf && \
 	dnf install -y man && \
 	# Install various packages
-	dnf install -y ${PKGS} && \
-	# Set the root password empty
-	echo 'root:' | chpasswd && \
-	# Add a normal privilege user
-	useradd -m ${USER}
+	dnf install -y ${PKGS}
 
-# login as a normal privilege user
-USER ${USER}
-WORKDIR /home/${USER}
+COPY entrypoint /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint"]

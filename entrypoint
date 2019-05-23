@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -e
+
+user=foo
+uid=1000
+gid=1000
+
+ARGS=$(getopt -o "u:U:G:" -l "user:,uid:,gid:" -n "$(basename $0)" -- "$@")
+
+eval set -- $ARGS
+
+while [ $# -gt 0 ]
+do
+	case $1 in
+	-u|--user)
+		user=$2
+		shift 2;;
+	-U|--uid)
+		uid=$2
+		shift 2;;
+	-G|--gid)
+		gid=$2
+		shift 2;;
+	--)
+		shift
+		break;;
+	esac
+done
+
+useradd -u $uid -m $user
+groupmod -g $gid $user
+
+# Allow the user to 'sudo' without password
+echo "$user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+cd /home/$user
+
+if [ -x /usr/sbin/gosu ]; then
+	exec /usr/sbin/gosu $user "$@"
+else
+	exec su -c "$@" $user
+fi

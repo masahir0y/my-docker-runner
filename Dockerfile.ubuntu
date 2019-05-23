@@ -5,9 +5,6 @@ ARG FROM=ubuntu
 
 FROM ${FROM}
 
-# user name
-ARG USER=foo
-
 # packages to install
 ARG PKGS=" \
 	apt-file \
@@ -21,6 +18,7 @@ ARG PKGS=" \
 	flex \
 	gettext \
 	git \
+	gosu \
 	gtk-doc-tools \
 	libelf-dev \
 	liblzma-dev \
@@ -41,12 +39,8 @@ RUN \
 	# Suppress "delaying package configuration" warning
 	DEBCONF_NOWARNINGS=yes apt-get install -y apt-utils && \
 	# Install various packages
-	apt-get install -y ${PKGS} && \
-	# Add a normal privilege user
-	useradd -m ${USER} && \
-	# Allow the user to 'sudo' without password
-	echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+	apt-get install -y ${PKGS}
 
-# login as a normal privilege user
-USER ${USER}
-WORKDIR /home/${USER}
+COPY entrypoint /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint"]
