@@ -3,8 +3,9 @@
 set -e
 
 build_only=
+user=foo
 
-ARGS=$(getopt -o "bd" -l "build-only,debug" -n "$(basename $0)" -- "$@")
+ARGS=$(getopt -o "bdu:" -l "build-only,debug,user:" -n "$(basename $0)" -- "$@")
 
 eval set -- $ARGS
 
@@ -17,6 +18,9 @@ do
 	-d|--debug)
 		set -x
 		shift;;
+	-u|--user)
+		user=$2
+		shift 2;;
 	--)
 		shift
 		break;;
@@ -67,4 +71,4 @@ done
 # This is needed for running 'strace' in a docker
 DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
 
-docker run $DOCKER_RUN_OPT $tag --uid=$(id -u) --gid=$(id -g) -- /bin/bash
+docker run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- /bin/bash
