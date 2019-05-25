@@ -4,15 +4,23 @@ set -e
 
 build_only=
 
+ARGS=$(getopt -o "bd" -l "build-only,debug" -n "$(basename $0)" -- "$@")
+
+eval set -- $ARGS
+
 while [ $# -gt 0 ]
 do
-	case "$1" in
-	-b | --build-only) build_only=1;;
-	-d | --debug) set -x;;
-	-* | --*) echo "$1: unknown option" >&2; exit 1;;
-	*) break;;
+	case $1 in
+	-b|--build-only)
+		build_only=1
+		shift;;
+	-d|--debug)
+		set -x
+		shift;;
+	--)
+		shift
+		break;;
 	esac
-	shift
 done
 
 default=ubuntu
