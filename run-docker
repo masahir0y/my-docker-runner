@@ -73,7 +73,7 @@ do
 	# Mount useful directories if they exist in your home directory.
 	# --volume=HOST_DIR:CONTAINER-DI
 	if [ -d $HOME/$d ]; then
-		DOCKER_RUN_OPT="$DOCKER_RUN_OPT --volume=$HOME/$d:/$d"
+		DOCKER_RUN_OPT="$DOCKER_RUN_OPT --volume=$HOME/$d:/home/$user/$d"
 	fi
 done
 
