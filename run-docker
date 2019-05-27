@@ -60,7 +60,13 @@ if [ "$build_only" = 1 ]; then
 	exit 0
 fi
 
-DOCKER_RUN_OPT=-it
+DOCKER_RUN_OPT=-t
+
+case $(basename $1) in
+*sh)
+	DOCKER_RUN_OPT="$DOCKER_RUN_OPT -i"
+	;;
+esac
 
 for d in $mount_dirs
 do
