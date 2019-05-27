@@ -31,6 +31,10 @@ do
 	esac
 done
 
+if [ $# = 0 ]; then
+	set /bin/bash
+fi
+
 mount_dirs="ref tools"
 
 distro=${from%:*}
@@ -70,4 +74,4 @@ done
 # This is needed for running 'strace' in a docker
 DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
 
-docker run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- /bin/bash
+docker run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
