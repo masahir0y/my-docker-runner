@@ -9,11 +9,14 @@ FROM ${FROM}
 ARG PKGS=" \
 	apt-file \
 	autoconf \
+	automake \
 	autopoint \
 	bc \
 	bison \
 	build-essential \
 	clang \
+	cmake \
+	curl \
 	cython \
 	flex \
 	gettext \
@@ -21,12 +24,18 @@ ARG PKGS=" \
 	gosu \
 	gtk-doc-tools \
 	libelf-dev \
+	libglib2.0 \
 	liblzma-dev \
+	libpixman-1-dev \
 	libssl-dev \
 	libtool \
 	man \
 	nano \
+	ninja-build \
+	ocaml \
 	pkg-config \
+	python \
+	python3 \
 	rsync \
 	strace \
 	sudo \
@@ -39,7 +48,7 @@ RUN \
 	# Suppress "delaying package configuration" warning
 	DEBCONF_NOWARNINGS=yes apt-get install -y apt-utils && \
 	# Install various packages
-	apt-get install -y ${PKGS}
+	DEBIAN_FRONTEND=noninteractive apt-get install -y ${PKGS}
 
 COPY entrypoint /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint
