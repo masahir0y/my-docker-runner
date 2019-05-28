@@ -28,7 +28,10 @@ do
 	esac
 done
 
-useradd -u $uid -m $user
+if [ -d /home/$user ]; then
+	useradd_opt=-M
+fi
+useradd $useradd_opt -u $uid $user
 groupmod -g $gid $user
 
 # Allow the user to 'sudo' without password
