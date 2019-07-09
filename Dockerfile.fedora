@@ -9,11 +9,16 @@ FROM ${FROM}
 ARG PKGS=" \
 	bison \
 	clang \
+	elfutils-libelf-devel \
+	findutils \
 	flex \
 	gcc \
 	git \
 	make \
 	nano \
+	openssl-devel \
+	rpm-build \
+	rsync \
 	strace \
 	sudo \
 "
