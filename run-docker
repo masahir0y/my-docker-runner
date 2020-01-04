@@ -6,7 +6,7 @@ build_only=
 user=foo
 from=ubuntu
 
-ARGS=$(getopt -o "bdf:u:" -l "build-only,debug,from:,user:" -n "$(basename $0)" -- "$@")
+ARGS=$(getopt -o "bdf:su:" -l "build-only,debug,from:,simple,user:" -n "$(basename $0)" -- "$@")
 
 eval set -- $ARGS
 
@@ -22,6 +22,9 @@ do
 	-f|--from)
 		from=$2
 		shift 2;;
+	-s|--simple)
+		simple_mode=1
+		shift;;
 	-u|--user)
 		user=$2
 		shift 2;;
@@ -68,16 +71,26 @@ case $(basename $1) in
 	;;
 esac
 
+if [ -n "$simple_mode" ]; then
+	container_home=/home/$user
+else
+	container_home=/home/$user
+fi
+
 for d in $mount_dirs
 do
 	# Mount useful directories if they exist in your home directory.
 	# --volume=HOST_DIR:CONTAINER-DI
 	if [ -d $HOME/$d ]; then
-		DOCKER_RUN_OPT="$DOCKER_RUN_OPT --volume=$HOME/$d:/home/$user/$d"
+		DOCKER_RUN_OPT="$DOCKER_RUN_OPT --volume=$HOME/$d:$container_home/$d"
 	fi
 done
 
 # This is needed for running 'strace' in a docker
 DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
 
-docker run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
+if [ -n "$simple_mode" ]; then
+	docker run $DOCKER_RUN_OPT $tag /bin/bash
+else
+	docker run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
+fi
