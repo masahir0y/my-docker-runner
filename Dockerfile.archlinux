@@ -1,0 +1,31 @@
+ARG FROM=archlinux
+
+FROM ${FROM}
+
+# user name
+ARG USER=foo
+
+# packages to install
+ARG PKGS=" \
+	bison \
+	flex \
+	gcc \
+	gettext \
+	make \
+	man \
+	nano \
+	pkg-config \
+	sudo \
+"
+
+RUN \
+	sed -i '/NoExtract.*usr\/share\/man/s/^/#/' /etc/pacman.conf && \
+	pacman -Sy --noconfirm ${PKGS} && \
+	# Add a normal privilage user
+	useradd -m ${USER} && \
+	# Allow the user to 'sudo' without password
+	echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# login as a normal privilege user
+USER ${USER}
+WORKDIR /home/${USER}
