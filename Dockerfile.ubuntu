@@ -1,9 +1,10 @@
 ARG FROM=ubuntu
-#ARG FROM=ubuntu:16.04
-#ARG FROM=ubuntu:18.04
-#ARG FROM=ubuntu:19.04
+#ARG FROM=ubuntu:14.04
 
 FROM ${FROM}
+
+# user name
+ARG USER=foo
 
 # packages to install
 ARG PKGS=" \
@@ -21,7 +22,6 @@ ARG PKGS=" \
 	flex \
 	gettext \
 	git \
-	gosu \
 	gtk-doc-tools \
 	libelf-dev \
 	libglib2.0 \
@@ -49,8 +49,12 @@ RUN \
 	DEBCONF_NOWARNINGS=yes apt-get install -y apt-utils && \
 	DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
 	# Install various packages
-	DEBIAN_FRONTEND=noninteractive apt-get install -y ${PKGS}
+	DEBIAN_FRONTEND=noninteractive apt-get install -y ${PKGS} && \
+	# Add a normal privilege user
+	useradd -m ${USER} && \
+	# Allow the user to 'sudo' without password
+	echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-COPY entrypoint /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint
-ENTRYPOINT ["/usr/local/bin/entrypoint"]
+# login as a normal privilege user
+USER ${USER}
+WORKDIR /home/${USER}

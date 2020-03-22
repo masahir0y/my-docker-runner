@@ -1,10 +1,9 @@
 ARG FROM=debian
-#ARG FROM=debian:jessie
+#ARG FROM=debian:stretch
+#ARG FROM=debian:buster
+#ARG FROM=debian:sid
 
 FROM ${FROM}
-
-# user name
-ARG USER=foo
 
 # packages to install
 ARG PKGS=" \
@@ -22,6 +21,7 @@ ARG PKGS=" \
 	flex \
 	gettext \
 	git \
+	gosu \
 	gtk-doc-tools \
 	libelf-dev \
 	libglib2.0 \
@@ -49,12 +49,8 @@ RUN \
 	DEBCONF_NOWARNINGS=yes apt-get install -y apt-utils && \
 	DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
 	# Install various packages
-	DEBIAN_FRONTEND=noninteractive apt-get install -y ${PKGS} && \
-	# Set the root password to 'r'
-	echo 'root:r' | chpasswd && \
-	# Add a normal privilege user
-	useradd -m ${USER}
+	DEBIAN_FRONTEND=noninteractive apt-get install -y ${PKGS}
 
-# login as a normal privilege user
-USER ${USER}
-WORKDIR /home/${USER}
+COPY entrypoint /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint"]

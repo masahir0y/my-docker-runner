@@ -6,7 +6,7 @@ build_only=
 user=foo
 from=ubuntu
 
-ARGS=$(getopt -o "bdf:su:" -l "build-only,debug,from:,simple,user:" -n "$(basename $0)" -- "$@")
+ARGS=$(getopt -o "bdf:gu:" -l "build-only,debug,from:,gosu,user:" -n "$(basename $0)" -- "$@")
 
 eval set -- $ARGS
 
@@ -22,8 +22,8 @@ do
 	-f|--from)
 		from=$2
 		shift 2;;
-	-s|--simple)
-		simple_mode=1
+	-g|--gosu)
+		use_gosu=1
 		shift;;
 	-u|--user)
 		user=$2
@@ -47,7 +47,9 @@ this_dir=$(dirname $(realpath $0))
 
 dockerfile=$this_dir/Dockerfile.$distro
 
-echo "$this_dir/$dockerfile"
+if [ -n "$use_gosu" ]; then
+	dockerfile=$dockerfile-gosu
+fi
 
 if [ ! -f "$dockerfile" ]; then
 	echo "$distro: unsupported" >&2
@@ -71,11 +73,7 @@ case $(basename $1) in
 	;;
 esac
 
-if [ -n "$simple_mode" ]; then
-	container_home=/home/$user
-else
-	container_home=/home/$user
-fi
+container_home=/home/$user
 
 for d in $mount_dirs
 do
@@ -89,8 +87,8 @@ done
 # This is needed for running 'strace' in a docker
 DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
 
-if [ -n "$simple_mode" ]; then
-	docker run $DOCKER_RUN_OPT $tag /bin/bash
-else
+if [ -n "$use_gosu" ]; then
 	docker run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
+else
+	docker run $DOCKER_RUN_OPT $tag /bin/bash
 fi
