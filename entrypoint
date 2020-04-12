@@ -39,8 +39,4 @@ echo "$user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 cd /home/$user
 
-if [ -x /usr/sbin/gosu ]; then
-	exec /usr/sbin/gosu $user "$@"
-else
-	exec su -c "$@" $user
-fi
+exec /usr/sbin/gosu $user "$@"
