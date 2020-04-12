@@ -3,7 +3,7 @@
 set -e
 
 build_only=
-user=foo
+user=$(whoami)
 from=ubuntu
 
 ARGS=$(getopt -o "bdf:gu:" -l "build-only,debug,from:,gosu,user:" -n "$(basename $0)" -- "$@")
@@ -58,7 +58,7 @@ fi
 
 tag=my-docker-builder/$from
 
-docker build -f $dockerfile -t $tag --build-arg FROM=$from $this_dir
+docker build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
 
 if [ "$build_only" = 1 ]; then
 	echo "Building '$tag' done"
