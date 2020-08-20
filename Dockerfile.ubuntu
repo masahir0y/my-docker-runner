@@ -36,6 +36,7 @@ ARG PKGS=" \
 	pkg-config \
 	python \
 	python3 \
+	qt5-default \
 	rsync \
 	strace \
 	sudo \
