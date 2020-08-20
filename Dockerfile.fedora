@@ -20,6 +20,7 @@ ARG PKGS=" \
 	make \
 	nano \
 	openssl-devel \
+	qt5-devel \
 	rpm-build \
 	rsync \
 	strace \
