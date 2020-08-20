@@ -87,6 +87,9 @@ done
 # This is needed for running 'strace' in a docker
 DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
 
+# For GUI
+DOCKER_RUN_OPT="$DOCKER_RUN_OPT -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY"
+
 if [ -n "$use_gosu" ]; then
 	docker run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
 else
