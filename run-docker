@@ -38,7 +38,7 @@ if [ $# = 0 ]; then
 	set /bin/bash
 fi
 
-mount_dirs="ref tools"
+mount_dirs="ref tools workspace"
 
 distro=${from%:*}
 
