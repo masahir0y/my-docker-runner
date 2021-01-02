@@ -17,12 +17,14 @@ ARG PKGS=" \
 	build-essential \
 	clang \
 	cmake \
+	cpio \
 	curl \
 	cython \
 	flex \
 	gettext \
 	git \
 	gtk-doc-tools \
+	kmod \
 	libelf-dev \
 	libglib2.0 \
 	liblzma-dev \
