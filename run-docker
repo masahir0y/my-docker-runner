@@ -87,7 +87,7 @@ do
 	# Mount useful directories if they exist in your home directory.
 	# --volume=HOST_DIR:CONTAINER-DI
 	if [ -d $HOME/$d ]; then
-		DOCKER_RUN_OPT="$DOCKER_RUN_OPT --volume=$HOME/$d:$container_home/$d"
+		DOCKER_RUN_OPT="$DOCKER_RUN_OPT --mount type=bind,src=$HOME/$d,dst=$container_home/$d"
 	fi
 done
 
@@ -95,7 +95,7 @@ done
 DOCKER_RUN_OPT="$DOCKER_RUN_OPT --security-opt seccomp:unconfined"
 
 # For GUI
-DOCKER_RUN_OPT="$DOCKER_RUN_OPT -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY"
+DOCKER_RUN_OPT="$DOCKER_RUN_OPT --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix -e DISPLAY=unix$DISPLAY"
 
 if [ -n "$use_gosu" ]; then
 	docker container run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
