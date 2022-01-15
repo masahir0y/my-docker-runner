@@ -100,5 +100,5 @@ DOCKER_RUN_OPT="$DOCKER_RUN_OPT --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X
 if [ -n "$use_gosu" ]; then
 	docker container run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
 else
-	docker container run $DOCKER_RUN_OPT $tag /bin/bash
+	docker container run $DOCKER_RUN_OPT $tag "$@"
 fi
