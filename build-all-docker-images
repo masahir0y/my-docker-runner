@@ -1,13 +1,6 @@
-#!/bin/sh
+#!/bin/sh -x
 
-run-docker -b centos:6
-run-docker -b centos:7
-run-docker -b fedora:29
-run-docker -b fedora:30
-run-docker -b fedora:31
-run-docker -b debian:stretch
-run-docker -b debian:buster
-run-docker -b debian:sid
-run-docker -b ubuntu:16.04
-run-docker -b ubuntu:18.04
-run-docker -b ubuntu:19.04
+for f in centos:7 centos:8 fedora:33 fedora:34 debian:buster debian:bullseye debian:sid ubuntu:20.04 ubuntu:21.10
+do
+	run-docker --build-only --push --from $f
+done
