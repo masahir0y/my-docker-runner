@@ -6,54 +6,51 @@ FROM ${FROM}
 # user name
 ARG USER=foo
 
-# packages to install
-ARG PKGS=" \
-	apt-file \
-	autoconf \
-	automake \
-	autopoint \
-	bc \
-	bison \
-	build-essential \
-	clang \
-	cmake \
-	curl \
-	cython \
-	flex \
-	gettext \
-	git \
-	gtk-doc-tools \
-	iproute2 \
-	iptables \
-	iputils-ping \
-	libelf-dev \
-	libglib2.0 \
-	liblzma-dev \
-	libpixman-1-dev \
-	libssl-dev \
-	libtool \
-	man \
-	nano \
-	ninja-build \
-	ocaml \
-	pkg-config \
-	python \
-	python3 \
-	qt5-default \
-	rsync \
-	strace \
-	sudo \
-	texinfo \
-	wget \
-"
-
 RUN \
 	apt-get update && \
 	# Suppress "delaying package configuration" warning
 	DEBCONF_NOWARNINGS=yes apt-get install -y apt-utils && \
 	DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
 	# Install various packages
-	DEBIAN_FRONTEND=noninteractive apt-get install -y ${PKGS} && \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y \
+		apt-file \
+		autoconf \
+		automake \
+		autopoint \
+		bc \
+		bison \
+		build-essential \
+		clang \
+		cmake \
+		curl \
+		cython \
+		flex \
+		gettext \
+		git \
+		gtk-doc-tools \
+		iproute2 \
+		iptables \
+		iputils-ping \
+		libelf-dev \
+		libglib2.0 \
+		liblzma-dev \
+		libpixman-1-dev \
+		libssl-dev \
+		libtool \
+		man \
+		nano \
+		ninja-build \
+		ocaml \
+		pkg-config \
+		python \
+		python3 \
+		qt5-default \
+		rsync \
+		strace \
+		sudo \
+		texinfo \
+		wget \
+		&& \
 	# Add a normal privilege user
 	useradd -m ${USER} && \
 	# Allow the user to 'sudo' without password

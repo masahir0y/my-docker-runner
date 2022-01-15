@@ -8,25 +8,6 @@ FROM ${FROM}
 # user name
 ARG USER=foo
 
-# packages to install
-ARG PKGS=" \
-	bison \
-	clang \
-	elfutils-libelf-devel \
-	findutils \
-	flex \
-	gcc \
-	git \
-	make \
-	nano \
-	openssl-devel \
-	qt5-devel \
-	rpm-build \
-	rsync \
-	strace \
-	sudo \
-"
-
 RUN \
 	# Install manuals
 	sed -i '/^tsflags=nodocs$/d' /etc/dnf/dnf.conf && \
@@ -34,7 +15,23 @@ RUN \
 	dnf reinstall -y dnf && \
 	dnf install -y man && \
 	# Install various packages
-	dnf install -y ${PKGS}  && \
+	dnf install -y \
+		bison \
+		clang \
+		elfutils-libelf-devel \
+		findutils \
+		flex \
+		gcc \
+		git \
+		make \
+		nano \
+		openssl-devel \
+		qt5-devel \
+		rpm-build \
+		rsync \
+		strace \
+		sudo \
+		&& \
 	# Set the root password empty
 	echo 'root:' | chpasswd && \
 	# Add a normal privilege user
