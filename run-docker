@@ -41,35 +41,36 @@ if [ $# = 0 ]; then
 	set /bin/bash
 fi
 
-mount_dirs="ref tools workspace"
-
-distro=${from%:*}
-
-# the directory path where this script is located
-this_dir=$(dirname $(realpath $0))
-
-dockerfile=$this_dir/Dockerfile.$distro
-
-if [ -n "$use_gosu" ]; then
-	dockerfile=$dockerfile-gosu
-fi
-
-if [ ! -f "$dockerfile" ]; then
-	echo "$distro: unsupported" >&2
-	exit 1
-fi
-
 if [ -n "$use_gosu" ]; then
 	tag=masahir0y/my-gosu-$from
 else
 	tag=masahir0y/my-$from
 fi
 
-docker image build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
+if [ "$build_only" = 1 ] || ! docker image pull $tag 2>/dev/null; then
 
-if [ "$build_only" = 1 ]; then
-	echo "Building '$tag' done"
-	exit 0
+	distro=${from%:*}
+
+	# the directory path where this script is located
+	this_dir=$(dirname $(realpath $0))
+
+	dockerfile=$this_dir/Dockerfile.$distro
+
+	if [ -n "$use_gosu" ]; then
+		dockerfile=$dockerfile-gosu
+	fi
+
+	if [ ! -f "$dockerfile" ]; then
+		echo "$distro: unsupported" >&2
+		exit 1
+	fi
+
+	docker image build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
+
+	if [ "$build_only" = 1 ]; then
+		echo "Building '$tag' done"
+		exit 0
+	fi
 fi
 
 DOCKER_RUN_OPT="-t --rm"
@@ -85,6 +86,8 @@ case $(basename $1) in
 esac
 
 container_home=/home/$user
+
+mount_dirs="ref tools workspace"
 
 for d in $mount_dirs
 do
