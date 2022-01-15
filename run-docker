@@ -59,7 +59,11 @@ if [ ! -f "$dockerfile" ]; then
 	exit 1
 fi
 
-tag=my-docker-builder/$from
+if [ -n "$use_gosu" ]; then
+	tag=masahir0y/my-gosu-$from
+else
+	tag=masahir0y/my-$from
+fi
 
 docker image build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
 
