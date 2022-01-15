@@ -6,7 +6,7 @@ build_only=
 user=$(whoami)
 from=ubuntu
 
-ARGS=$(getopt -o "bdf:gpu:" -l "build-only,debug,from:,gosu,privileged,user:" -n "$(basename $0)" -- "$@")
+ARGS=$(getopt -o "bdf:gpu:" -l "build-only,debug,from:,gosu,privileged,push,user:" -n "$(basename $0)" -- "$@")
 
 eval set -- $ARGS
 
@@ -27,6 +27,9 @@ do
 		shift;;
 	-p|--privileged)
 		privileged=1
+		shift;;
+	--push)
+		push=1
 		shift;;
 	-u|--user)
 		user=$2
@@ -66,6 +69,10 @@ if [ "$build_only" = 1 ] || ! docker image pull $tag 2>/dev/null; then
 	fi
 
 	docker image build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
+
+	if [ "$push" = 1 ]; then
+		docker push $tag
+	fi
 
 	if [ "$build_only" = 1 ]; then
 		echo "Building '$tag' done"
