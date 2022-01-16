@@ -24,7 +24,6 @@ RUN \
 		cmake \
 		cpio \
 		curl \
-		cython \
 		flex \
 		gettext \
 		git \

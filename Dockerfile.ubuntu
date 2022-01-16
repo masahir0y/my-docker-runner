@@ -23,7 +23,6 @@ RUN \
 		clang \
 		cmake \
 		curl \
-		cython \
 		flex \
 		gettext \
 		git \
@@ -44,7 +43,7 @@ RUN \
 		pkg-config \
 		python \
 		python3 \
-		qt5-default \
+		qtbase5-dev \
 		rsync \
 		strace \
 		sudo \
