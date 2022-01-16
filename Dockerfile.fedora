@@ -26,7 +26,7 @@ RUN \
 		make \
 		nano \
 		openssl-devel \
-		qt5-devel \
+		qt5-qtbase-devel \
 		rpm-build \
 		rsync \
 		strace \
