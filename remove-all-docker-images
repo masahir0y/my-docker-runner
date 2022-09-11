@@ -1,4 +1,0 @@
-#!/bin/sh
-
-docker images -aq | xargs -r docker rmi -f --
-docker images -aq | xargs -r docker rmi -f --

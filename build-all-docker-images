@@ -1,6 +1,0 @@
-#!/bin/sh -x
-
-for f in centos:7 centos:8 fedora:33 fedora:34 debian:buster debian:bullseye debian:sid ubuntu:20.04 ubuntu:21.10
-do
-	run-docker --build-only --push --from $f
-done
