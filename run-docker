@@ -4,6 +4,13 @@ set -e
 
 build_only=
 user=$(whoami)
+run_args=(
+	--rm
+	# This is needed for running 'strace' in a docker
+	--security-opt seccomp:unconfined
+	# For GUI
+	--mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix -e DISPLAY=unix$DISPLAY
+)
 
 ARGS=$(getopt -o "bdpu:" -l "build-only,debug,privileged,push,user:" -n "$(basename $0)" -- "$@")
 
@@ -19,7 +26,7 @@ do
 		set -x
 		shift;;
 	-p|--privileged)
-		privileged=1
+		run_args+=(--privileged)
 		shift;;
 	--push)
 		push=1
@@ -43,6 +50,7 @@ shift
 
 if [ $# = 0 ]; then
 	set /bin/bash
+	run_args+=(-i -t)
 fi
 
 # the directory path where this script is located
@@ -66,39 +74,19 @@ if [ "$build_only" = 1 ]; then
 	exit 0
 fi
 
-DOCKER_RUN_OPT="-t --rm"
-
-if [ "$privileged" = 1 ]; then
-	DOCKER_RUN_OPT+=" --privileged"
-fi
-
-case $(basename $1) in
-*sh)
-	DOCKER_RUN_OPT+=" -i"
-	;;
-esac
-
 container_home=/home/$user
 
-mount_dirs="priv ref tools workspace"
-
-for d in $mount_dirs
+for d in priv ref tools workspace
 do
 	# Mount useful directories if they exist in your home directory.
 	# --volume=HOST_DIR:CONTAINER-DI
 	if [ -d $HOME/$d ]; then
-		DOCKER_RUN_OPT+=" --mount type=bind,src=$HOME/$d,dst=$container_home/$d"
+		run_args+=(--mount type=bind,src=$HOME/$d,dst=$container_home/$d)
 	fi
 done
 
-# This is needed for running 'strace' in a docker
-DOCKER_RUN_OPT+=" --security-opt seccomp:unconfined"
-
-# For GUI
-DOCKER_RUN_OPT+=" --mount type=bind,src=/tmp/.X11-unix,dst=/tmp/.X11-unix -e DISPLAY=unix$DISPLAY"
-
 if [[ $dockerfile = *.gosu ]]; then
-	exec docker container run $DOCKER_RUN_OPT $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
+	exec docker container run ${run_args[@]} $tag --user=$user --uid=$(id -u) --gid=$(id -g) -- "$@"
 else
-	exec docker container run $DOCKER_RUN_OPT $tag "$@"
+	exec docker container run ${run_args[@]} $tag "$@"
 fi
