@@ -4,9 +4,8 @@ set -e
 
 build_only=
 user=$(whoami)
-from=ubuntu
 
-ARGS=$(getopt -o "bdf:gpu:" -l "build-only,debug,from:,gosu,privileged,push,user:" -n "$(basename $0)" -- "$@")
+ARGS=$(getopt -o "bdgpu:" -l "build-only,debug,gosu,privileged,push,user:" -n "$(basename $0)" -- "$@")
 
 eval set -- $ARGS
 
@@ -19,9 +18,6 @@ do
 	-d|--debug)
 		set -x
 		shift;;
-	-f|--from)
-		from=$2
-		shift 2;;
 	-g|--gosu)
 		use_gosu=1
 		shift;;
@@ -41,13 +37,8 @@ do
 done
 
 if [ $# = 0 ]; then
-	set /bin/bash
-fi
-
-if [ -n "$use_gosu" ]; then
-	tag=masahir0y/my-gosu-$from
-else
-	tag=masahir0y/my-$from
+	echo "specify the base image to run" >&2
+	exit 1
 fi
 
 if [ "$build_only" = 1 ] || ! docker image pull $tag 2>/dev/null; then
