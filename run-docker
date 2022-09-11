@@ -59,11 +59,17 @@ dockerfile=$this_dir/Dockerfile
 tag=masahir0y/my-$from
 from=masahir0y/$from
 
+build_args=(
+	--build-arg FROM=$from
+)
+
 if docker run $from /bin/sh -c 'command -v gosu' >/dev/null; then
 	dockerfile=$dockerfile.gosu
+else
+	build_args+=(--build-arg USER=$user)
 fi
 
-docker image build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
+docker image build -f $dockerfile -t $tag ${build_args[@]} $this_dir
 
 if [ "$push" = 1 ]; then
 	docker push $tag
