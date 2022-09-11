@@ -41,34 +41,33 @@ if [ $# = 0 ]; then
 	exit 1
 fi
 
-if [ "$build_only" = 1 ] || ! docker image pull $tag 2>/dev/null; then
+from=$1
+shift
 
-	distro=${from%:*}
+if [ $# = 0 ]; then
+	set /bin/bash
+fi
 
-	# the directory path where this script is located
-	this_dir=$(dirname $(realpath $0))
+# the directory path where this script is located
+this_dir=$(dirname $(realpath $0))
+dockerfile=$this_dir/Dockerfile
+tag=masahir0y/my-$from
+from=masahir0y/$from
 
-	dockerfile=$this_dir/Dockerfile.$distro
+if [ -n "$use_gosu" ]; then
+	dockerfile=$dockerfile.gosu
+	tag=$tag-gosu
+fi
 
-	if [ -n "$use_gosu" ]; then
-		dockerfile=$dockerfile-gosu
-	fi
+docker image build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
 
-	if [ ! -f "$dockerfile" ]; then
-		echo "$distro: unsupported" >&2
-		exit 1
-	fi
+if [ "$push" = 1 ]; then
+	docker push $tag
+fi
 
-	docker image build -f $dockerfile -t $tag --build-arg FROM=$from --build-arg USER=$user $this_dir
-
-	if [ "$push" = 1 ]; then
-		docker push $tag
-	fi
-
-	if [ "$build_only" = 1 ]; then
-		echo "Building '$tag' done"
-		exit 0
-	fi
+if [ "$build_only" = 1 ]; then
+	echo "Building '$tag' done"
+	exit 0
 fi
 
 DOCKER_RUN_OPT="-t --rm"
