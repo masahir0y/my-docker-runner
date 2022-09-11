@@ -94,7 +94,7 @@ esac
 
 container_home=/home/$user
 
-mount_dirs="ref tools workspace"
+mount_dirs="priv ref tools workspace"
 
 for d in $mount_dirs
 do
